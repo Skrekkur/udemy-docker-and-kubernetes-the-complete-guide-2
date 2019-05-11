@@ -8,3 +8,17 @@ before_install:
 
 script:
   - docker run skrekkur/react-test npm test -- --coverage
+
+
+after_success:
+  - docker build -t skrekkur/multi-client ./client
+  - docker build -t skrekkur/multi-nginx ./nginx
+  - docker build -t skrekkur/multi-server ./server
+  - docker build -t skrekkur/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push skrekkur/multi-client
+  - docker push skrekkur/multi-nginx
+  - docker push skrekkur/multi-server
+  - docker push skrekkur/multi-worker
+    
